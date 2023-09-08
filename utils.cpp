@@ -2,11 +2,23 @@
 #include <string.h>
 #include "utils.h"
 
+
+
+
+
+
+
+
+
+
+
+
+
 int CheckFile (const char* filename)
 {
     myAssert (filename, NULLPTR);
 
-    FILE *fp = fopen (filename, "r");
+    FILE* fp = fopen (filename, "rb");
         if (fp == NULL)
           {
             printf ("Unable to open file\n");

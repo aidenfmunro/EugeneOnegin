@@ -14,10 +14,9 @@ enum CORRECTFILE
     CORRECT   = 1
 };
 
-
 #define myAssert(EXPRESSION, ERROR_CODE)                                       \
-                             if (!(EXPRESSION))                                \
-                              {                                                \
+    if (!(EXPRESSION))                                                         \
+      {                                                                        \
         fprintf (stderr,"%s, failed at %s:%d\n", #ERROR_CODE                   \
         , __FILE__, __LINE__);                                                 \
         exit(ERROR_CODE);                                                      \
@@ -25,6 +24,7 @@ enum CORRECTFILE
 
 
 int CheckFile (const char* filename);
+
 
 
 #endif
