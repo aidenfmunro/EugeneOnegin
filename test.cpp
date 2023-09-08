@@ -17,41 +17,41 @@ int main ()
     size_t length = stats.st_size / sizeof(char);
 
     char* buffer = (char*) calloc (length + 1, sizeof(char));
+    buffer[length] = '\0';
+    fread(buffer, sizeof(char), length, fp);
     
 
-    fread(buffer, sizeof(char), length, fp);
+
+    fclose(fp);
 
     printf("%s\n", buffer);
 
     printf("%lld\n", length);
 
-    size_t lines = 0;
+    size_t lines = 1;
 
-    size_t i = 0;
-
-    for (i = 0; i < length; i++)
+    for (size_t i = 0; i < length; i++)
         if (buffer[i] == '\n')
             lines++;
-    lines++;
 
     printf("%lld\n", lines);
 
-    buffer[i + 1] = '\0';
 
-    char** lineptrs = (char**) calloc (lines, sizeof(char*));
+    char** lineptrs = (char**)calloc(lines, sizeof(char*));
     
     lineptrs = &buffer;
 
     char* textptr = strchr(buffer, '\n');
+
     while (textptr != NULL)
       {
+        *textptr = '\0';
         *lineptrs = textptr + 1;
         lineptrs++;
         *(textptr - 1) = '\0';
-        *textptr = '\0';
-        textptr = strchr(buffer, '\n');
-
         printf("text pointer: %p\n", textptr);
+        textptr = strchr(textptr + 1, '\n'); 
+
       }
 
     
@@ -60,6 +60,5 @@ int main ()
 
   
 
-    fclose(fp);
 
 }
