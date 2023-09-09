@@ -12,9 +12,9 @@ int main ()
 
     struct stat stats = {};
 
-    stat("test1.txt", &stats);
+    stat("in.txt", &stats);
 
-    FILE* fp = fopen("test1.txt", "rb");
+    FILE* fp = fopen("in.txt", "rb");
 
     size_t length = stats.st_size / sizeof(char);
 
@@ -42,7 +42,11 @@ int main ()
     
     *lineptrs = buffer;
 
-    printf("%p\n", buffer);
+    printf("\n");
+
+    printf("%p\n", *lineptrs);
+
+    printf("\n");
 
     char* textptr = strchr(buffer, '\n');
 
@@ -57,7 +61,7 @@ int main ()
         textptr = strchr(tempptr + 1, '\n'); 
     }
 
-    lineptrs -= (lines);
+    lineptrs -= (lines - 1);
 
     // printf("%p\n", *lineptrs);
     
@@ -82,7 +86,7 @@ void bubbleSort(char** lineptrs, size_t lines)
 {
   for (size_t i = 0; i < lines - 1; i++)
     for (size_t j = 1; j < lines - 1 - j; j++)
-         if (strcmp(*(lineptrs + j), *(lineptrs + j + 1)) < 0)
+         if (strcmp(*(lineptrs + j), *(lineptrs + j + 1)) > 0)
           {
             swap(*(lineptrs + j), *(lineptrs + j + 1));
           }       

@@ -6,6 +6,7 @@
 enum ERRORS
 {
     NULLPTR = 0,
+    OVERLAP = 1
 };
 
 enum CORRECTFILE
@@ -34,8 +35,11 @@ struct Text
 void CreateText(Text* text, const char* filename);
 int CheckFile (const char* filename);
 size_t getLength(const char* filename);
-size_t getLines(Text* text);
+size_t countLines(Text* text);
 char* parseBuf(Text* text, const char* filename);
+char** getLinePointers(Text *text);
+void bubbleSort(Text* text);
+void swap(char* ptr1, char* ptr2);
 
 
 
