@@ -22,8 +22,21 @@ enum CORRECTFILE
         exit(ERROR_CODE);                                                      \
       }
 
+struct Text 
+{
+    char*  buffer;
+    char** lineptrs;
+    size_t length,
+           lines;
+};
 
+
+void CreateText(Text* text, const char* filename);
 int CheckFile (const char* filename);
+size_t getLength(const char* filename);
+size_t getLines(Text* text);
+char* parseBuf(Text* text, const char* filename);
+
 
 
 
