@@ -20,10 +20,12 @@ void CreateText(Text* text, const char* filename)
     printf("%lld\n", text->lines);
     putchar('\n');
 
+    /*
     for (size_t i = 0; i < text->lines; i++)
       {
         printf("%lld: %p\n", i + 1, getLine(text, i));
       }
+    */
 
     putchar('\n');
 
@@ -110,10 +112,15 @@ void bubbleSort(Text* text, int(*compareString)(void* a, void* b))
 
     for (size_t i = 0; i < text->lines - 1; i++)
       for (size_t j = 0; j < text->lines - 1 - i; j++)
-          if (compareString(getLine(text, j), getLine(text, j + 1)) > 0)
+        {
+          char** str1 = getLine(text, j);
+          char** str2 = getLine(text, j + 1);
+          
+          if (compareString(str1, str2) > 0)
             {
-              swap(getLine(text, j), getLine(text, j + 1));
-            }             
+              swap(str1, str2);
+            }
+        }             
 }   
 
 void swap(char** ptr1, char** ptr2) 
