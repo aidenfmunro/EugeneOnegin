@@ -109,13 +109,13 @@ void bubbleSort(Text* text)
 
     for (size_t i = 0; i < text->lines - 1; i++)
       for (size_t j = 0; j < text->lines - 1 - j; j++)
-          if (strcmp(*getLine(text, j), *getLine(text, j + 1)) <   0)
+          if (compareString(getLine(text, j), getLine(text, j + 1)) > 0)
             {
               swap(getLine(text, j), getLine(text, j + 1));
             }             
 }   
 
-void swap(char** ptr1, char** ptr2)
+void swap(char** ptr1, char** ptr2) 
 {   
     myAssert(ptr1, NULLPTR);
     myAssert(ptr2, NULLPTR);
@@ -126,7 +126,7 @@ void swap(char** ptr1, char** ptr2)
 }
 
 
-int CheckFile (const char* filename)
+size_t CheckFile (const char* filename)
 {
     myAssert (filename, NULLPTR);
 
@@ -147,4 +147,23 @@ int CheckFile (const char* filename)
       }
     
     return INCORRECT;
+}
+
+/*
+int compareFunc(void* a, void* b)
+{
+
+}
+*/
+
+/*
+int compareInt(void* a, void* b)
+{
+    return *(const int*) a - *(const int*) b;
+}
+*/
+
+int compareString(void* a, void* b)
+{
+    return strcmp(*(char**) a, *(char**) b);
 }

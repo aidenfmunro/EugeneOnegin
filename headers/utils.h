@@ -3,6 +3,8 @@
 
 #include <stdlib.h>
 
+typedef int (compareString_t)(void* a, void* b);
+
 enum ERRORS
 {
     NULLPTR = 0,
@@ -33,14 +35,15 @@ struct Text
 
 
 void CreateText(Text* text, const char* filename);
-int CheckFile (const char* filename);
+size_t CheckFile (const char* filename);
 size_t getLength(const char* filename);
 size_t countLines(Text* text);
 char* parseBuf(Text* text, const char* filename);
 char** getLinePointers(Text *text);
+char** getLine(Text* text, size_t shift);
 void bubbleSort(Text* text);
 void swap(char** ptr1, char** ptr2);
-char** getLine(Text* text, size_t shift);
+int compareString(void* a, void* b);
 
 
 
