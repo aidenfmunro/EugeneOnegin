@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys\stat.h>
+#include <ctype.h>
 #include "utils.h"
 
 void CreateText(Text* text, const char* filename)
@@ -26,7 +27,7 @@ void CreateText(Text* text, const char* filename)
 
     putchar('\n');
 
-    bubbleSort(text);
+    bubbleSort(text, &compareString);
 
     putchar('\n');
 
@@ -103,12 +104,12 @@ char** getLine(Text* text, size_t shift)
     return text->lineptrs + shift;
 }
 
-void bubbleSort(Text* text)
+void bubbleSort(Text* text, int(*compareString)(void* a, void* b))
 {
     myAssert(text, NULLPTR);
 
     for (size_t i = 0; i < text->lines - 1; i++)
-      for (size_t j = 0; j < text->lines - 1 - j; j++)
+      for (size_t j = 0; j < text->lines - 1 - i; j++)
           if (compareString(getLine(text, j), getLine(text, j + 1)) > 0)
             {
               swap(getLine(text, j), getLine(text, j + 1));
@@ -124,6 +125,25 @@ void swap(char** ptr1, char** ptr2)
     *ptr2 = *ptr1;
     *ptr1 = temp;
 }
+
+int compareString(void* a, void* b)
+{
+    char* strptr1 = *(char**) a;
+    char* strptr2 = *(char**) b;
+
+    while(*strptr1 != '\0' && *strptr1 != '\r' && !isalpha(*strptr1))
+        strptr1++;
+    while(*strptr2 != '\0' && *strptr2 != '\r' && !isalpha(*strptr2))
+        strptr2++;
+
+    while(*strptr1 == *strptr2)
+      {
+        strptr1++;
+        strptr2++;
+      }
+  
+    return *strptr1 - *strptr2;
+} 
 
 
 size_t CheckFile (const char* filename)
@@ -149,6 +169,7 @@ size_t CheckFile (const char* filename)
     return INCORRECT;
 }
 
+
 /*
 int compareFunc(void* a, void* b)
 {
@@ -162,8 +183,3 @@ int compareInt(void* a, void* b)
     return *(const int*) a - *(const int*) b;
 }
 */
-
-int compareString(void* a, void* b)
-{
-    return strcmp(*(char**) a, *(char**) b);
-}
