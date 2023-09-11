@@ -39,8 +39,8 @@ size_t countLines(Text* text);
 char* parseBuf(Text* text, const char* filename);
 char** getLinePointers(Text *text);
 void bubbleSort(Text* text);
-void swap(char* ptr1, char* ptr2);
-
+void swap(char** ptr1, char** ptr2);
+char** getLine(Text* text, size_t shift);
 
 
 

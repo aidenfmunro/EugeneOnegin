@@ -21,7 +21,7 @@ void CreateText(Text* text, const char* filename)
 
     for (size_t i = 0; i < text->lines; i++)
       {
-        printf("%p\n", *(text->lineptrs + i));
+        printf("%lld: %p\n", i + 1, getLine(text, i));
       }
 
     putchar('\n');
@@ -32,7 +32,7 @@ void CreateText(Text* text, const char* filename)
 
     for (size_t i = 0; i < text->lines; i++)
       {
-        printf("%s\n", *(text->lineptrs + i));
+        printf("%lld: %s\n", i + 1, *getLine(text, i));
       }
 
 
@@ -67,7 +67,7 @@ char* parseBuf(Text* text, const char* filename)
 
     FILE* fp = fopen(filename, "rb");
 
-    char* buffer = (char*) calloc (text->length + 1, sizeof(char));
+    char* buffer = (char*)calloc(text->length + 1, sizeof(char));
     fread(buffer, sizeof(char), text->length, fp);
     buffer[text->length] = '\0';
   
@@ -96,11 +96,11 @@ size_t countLines(Text* text)
     return lines;
 }
 
-char* getLine(Text* text, size_t shift)
+char** getLine(Text* text, size_t shift)
 {
-    myAssert(0 <= shift < text->lines, OVERLAP);
+    myAssert(shift < text->lines, OVERLAP);
 
-    return *(text->lineptrs + shift);
+    return text->lineptrs + shift;
 }
 
 void bubbleSort(Text* text)
@@ -108,22 +108,23 @@ void bubbleSort(Text* text)
     myAssert(text, NULLPTR);
 
     for (size_t i = 0; i < text->lines - 1; i++)
-      for (size_t j = 1; j < text->lines - 1 - j; j++)
-          if (strcmp(getLine(text, j), getLine(text, j + 1)) > 0)
+      for (size_t j = 0; j < text->lines - 1 - j; j++)
+          if (strcmp(*getLine(text, j), *getLine(text, j + 1)) <   0)
             {
               swap(getLine(text, j), getLine(text, j + 1));
-            }       
+            }             
 }   
 
-void swap(char* ptr1, char* ptr2)
+void swap(char** ptr1, char** ptr2)
 {   
     myAssert(ptr1, NULLPTR);
     myAssert(ptr2, NULLPTR);
 
-    char* temp = ptr2;
+    char* temp = *ptr2;
     *ptr2 = *ptr1;
-    *ptr1 = *temp;
+    *ptr1 = temp;
 }
+
 
 int CheckFile (const char* filename)
 {
