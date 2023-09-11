@@ -3,12 +3,18 @@
 
 #include <stdlib.h>
 
-typedef int (compareString_t)(void* a, void* b);
+// #define SWAP(a,b) do { __typeof__(a) temp; temp = a; a = b; b = temp;} while(0)
 
 enum ERRORS
 {
     NULLPTR = 0,
     OVERLAP = 1
+};
+
+enum SORT
+{
+    FORWARDS  = 1,
+    BACKWARDS = 0
 };
 
 enum CORRECTFILE
@@ -45,6 +51,7 @@ char** getLine(Text* text, size_t shift);
 void bubbleSort(Text* text, int(*compareString)(void* a, void* b));
 void swap(char** ptr1, char** ptr2);
 int compareString(void* a, void* b);
+
 
 
 

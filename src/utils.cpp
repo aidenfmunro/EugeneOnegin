@@ -41,12 +41,13 @@ void AppendText(Text* text, const char* filename)
 {
   myAssert(text, NULLPTR);
 
-  FILE* fp = fopen(filename, "w");
+  FILE* fp = fopen(filename, "a");
 
   for (size_t i = 0; i < text->lines; i++)
     {
       fputs(*getLine(text, i), fp);
     }
+  // fputs("----------------------------------------", fp);
 
   fclose(fp);
 }
@@ -80,9 +81,10 @@ char* parseBuf(Text* text, const char* filename)
 
     FILE* fp = fopen(filename, "rb");
 
-    char* buffer = (char*)calloc(text->length + 1, sizeof(char));
+    char* buffer = (char*)calloc(text->length + 3, sizeof(char));
     fread(buffer, sizeof(char), text->length, fp);
-    buffer[text->length] = '\0';
+    buffer[text->length] = '\r';
+    buffer[text->length + 1] = '\0';
   
     fclose(fp);
 
@@ -146,8 +148,8 @@ void swap(char** ptr1, char** ptr2)
 int compareString(void* a, void* b)
 {
     char* strptr1 = *(char**) a;
-    char* strptr2 = *(char**) b;
-
+    char* strptr2 = *(char**) b; 
+  
     while (*strptr1 != '\0' && *strptr1 != '\r' && !isalpha(*strptr1))
         strptr1++;
     while (*strptr2 != '\0' && *strptr2 != '\r' && !isalpha(*strptr2))
@@ -158,8 +160,8 @@ int compareString(void* a, void* b)
         strptr1++;
         strptr2++;
       }
-  
-    return *strptr1 - *strptr2;
+       
+    return  *strptr1 - *strptr2;
 } 
 
 
