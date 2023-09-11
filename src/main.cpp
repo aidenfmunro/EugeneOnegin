@@ -10,9 +10,13 @@ int main (int argc, char* argv[])
     else if (CheckFile (argv[1]) && CheckFile (argv[2]))
       {
         Text txt1 = {};
+        Text txt2 = {};
   
-        CreateText(&txt1, argv[1]);
+        CreateText(&txt1, argv[1], FORWARDS);
         AppendText(&txt1, argv[2]);
+
+        CreateText(&txt2, argv[1], BACKWARDS);
+        AppendText(&txt2, argv[2]);
 
         // CreateText(&txt2, argv[1]);
         // AppendText(&txt2, argv[2]);

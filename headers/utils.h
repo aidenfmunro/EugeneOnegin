@@ -40,7 +40,7 @@ struct Text
 };
 
 
-void CreateText(Text* text, const char* filename);
+void CreateText(Text* text, const char* filename, size_t sortmode);
 void AppendText(Text* text, const char* filename);
 size_t CheckFile (const char* filename);
 size_t getLength(const char* filename);
@@ -50,7 +50,8 @@ char** getLinePointers(Text *text);
 char** getLine(Text* text, size_t shift);
 void bubbleSort(Text* text, int(*compareString)(void* a, void* b));
 void swap(char** ptr1, char** ptr2);
-int compareString(void* a, void* b);
+int compareStringForw(void* a, void* b);
+int compareStringBack(void* a, void* b);
 
 
 

@@ -4,7 +4,7 @@
 #include <ctype.h>
 #include "utils.h"
 
-void CreateText(Text* text, const char* filename)
+void CreateText(Text* text, const char* filename, size_t sortmode)
 {
     myAssert(text, NULLPTR);
 
@@ -20,16 +20,12 @@ void CreateText(Text* text, const char* filename)
     printf("lines: %lld\n", text->lines);
     putchar('\n');
 
-    /*
-    for (size_t i = 0; i < text->lines; i++)
-      {
-        printf("%lld: %p\n", i + 1, getLine(text, i));
-      }
-    */
-
-    // putchar('\n');
-
-    bubbleSort(text, &compareString);
+    if (sortmode == FORWARDS)
+        bubbleSort(text, &compareStringForw);
+  
+    else if (sortmode == BACKWARDS)
+        bubbleSort(text, &compareStringBack);
+  
 
     for (size_t i = 0; i < text->lines; i++)
       {
@@ -47,7 +43,7 @@ void AppendText(Text* text, const char* filename)
     {
       fputs(*getLine(text, i), fp);
     }
-  // fputs("----------------------------------------", fp);
+  fputs("---------------------------------------------\n", fp);
 
   fclose(fp);
 }
@@ -65,7 +61,6 @@ char** getLinePointers(Text *text)
         *textptr = '\0'; // \n -> \0
         lineptrs++;
         *lineptrs = textptr + 1;
-        // *(textptr - 1) = '\0'; // \r -> \0
         char* tempptr = textptr;
         textptr = strchr(tempptr + 1, '\n'); 
       }
@@ -145,7 +140,7 @@ void swap(char** ptr1, char** ptr2)
     *ptr1 = temp;
 }
 
-int compareString(void* a, void* b)
+int compareStringForw(void* a, void* b)
 {
     char* strptr1 = *(char**) a;
     char* strptr2 = *(char**) b; 
@@ -162,8 +157,34 @@ int compareString(void* a, void* b)
       }
        
     return  *strptr1 - *strptr2;
-} 
+}
 
+int compareStringBack(void* a, void* b)
+{
+    char* strptr1 = *(char**) a;
+    char* strptr2 = *(char**) b; 
+
+    char* fixptr1 = *(char**) a;
+    char* fixptr2 = *(char**) b; 
+  
+    while (*strptr1 != '\r')
+        strptr1++;
+    while (*strptr2 != '\r')
+        strptr2++;
+    
+    while (!isalpha(*strptr1) && strptr1 > fixptr1)
+        strptr1--;
+    while (!isalpha(*strptr2) && strptr2 > fixptr2)
+        strptr2--;
+  
+    while (*strptr1 == *strptr2 && strptr1 > fixptr1  && strptr2 > fixptr2)
+      {
+        strptr1++;
+        strptr2++;
+      }
+       
+    return  *strptr1 - *strptr2;
+} 
 
 size_t CheckFile(const char* filename)
 {
