@@ -13,11 +13,11 @@ void CreateText(Text* text, const char* filename)
     text->lines = countLines(text);
     text->lineptrs = getLinePointers(text);
 
-    printf("%s\n", text->buffer);
+    // printf("%s\n", text->buffer);
     putchar('\n');
-    printf("%lld\n", text->length);
+    printf("size: %lld\n", text->length);
     putchar('\n');
-    printf("%lld\n", text->lines);
+    printf("lines: %lld\n", text->lines);
     putchar('\n');
 
     /*
@@ -27,18 +27,28 @@ void CreateText(Text* text, const char* filename)
       }
     */
 
-    putchar('\n');
+    // putchar('\n');
 
     bubbleSort(text, &compareString);
-
-    putchar('\n');
 
     for (size_t i = 0; i < text->lines; i++)
       {
         printf("%lld: %s\n", i + 1, *getLine(text, i));
       }
+}
 
+void AppendText(Text* text, const char* filename)
+{
+  myAssert(text, NULLPTR);
 
+  FILE* fp = fopen(filename, "w");
+
+  for (size_t i = 0; i < text->lines; i++)
+    {
+      fputs(*getLine(text, i), fp);
+    }
+
+  fclose(fp);
 }
 
 char** getLinePointers(Text *text)
@@ -115,7 +125,7 @@ void bubbleSort(Text* text, int(*compareString)(void* a, void* b))
         {
           char** str1 = getLine(text, j);
           char** str2 = getLine(text, j + 1);
-          
+
           if (compareString(str1, str2) > 0)
             {
               swap(str1, str2);
@@ -138,12 +148,12 @@ int compareString(void* a, void* b)
     char* strptr1 = *(char**) a;
     char* strptr2 = *(char**) b;
 
-    while(*strptr1 != '\0' && *strptr1 != '\r' && !isalpha(*strptr1))
+    while (*strptr1 != '\0' && *strptr1 != '\r' && !isalpha(*strptr1))
         strptr1++;
-    while(*strptr2 != '\0' && *strptr2 != '\r' && !isalpha(*strptr2))
+    while (*strptr2 != '\0' && *strptr2 != '\r' && !isalpha(*strptr2))
         strptr2++;
 
-    while(*strptr1 == *strptr2)
+    while (*strptr1 == *strptr2)
       {
         strptr1++;
         strptr2++;
@@ -153,22 +163,22 @@ int compareString(void* a, void* b)
 } 
 
 
-size_t CheckFile (const char* filename)
+size_t CheckFile(const char* filename)
 {
-    myAssert (filename, NULLPTR);
+    myAssert(filename, NULLPTR);
 
-    FILE* fp = fopen (filename, "rb");
+    FILE* fp = fopen(filename, "rb");
         if (fp == NULL)
           {
-            printf ("Unable to open file\n");
+            printf("Unable to open file\n");
             return INCORRECT;
           }
 
-    fclose (fp);
+    fclose(fp);
 
-    char* dotptr = strchr (filename, (int)('.')) + 1;
+    char* dotptr = strchr(filename, (int)('.')) + 1;
 
-    if(strcmp ("txt", dotptr) || strcmp ("doc", dotptr) ||  strcmp ("docx", dotptr) || strcmp ("rtf", dotptr))
+    if(strcmp("txt", dotptr) || strcmp("doc", dotptr) ||  strcmp("docx", dotptr) || strcmp("rtf", dotptr))
       {
         return CORRECT;
       }

@@ -35,6 +35,7 @@ struct Text
 
 
 void CreateText(Text* text, const char* filename);
+void AppendText(Text* text, const char* filename);
 size_t CheckFile (const char* filename);
 size_t getLength(const char* filename);
 size_t countLines(Text* text);

@@ -10,9 +10,9 @@ int main (int argc, char* argv[])
     else if (CheckFile (argv[1]) && CheckFile (argv[2]))
       {
         Text original = {};
-        // printf("%s\n", argv[1]);
         // printf("%lld", getLength(argv[1]));
         CreateText(&original, argv[1]);
+        AppendText(&original, argv[2]);
       }
 }
 
