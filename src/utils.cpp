@@ -13,7 +13,6 @@ void CreateText(Text* text, const char* filename, size_t sortmode)
     text->lines = countLines(text);
     text->lineptrs = getLinePointers(text);
 
-    // printf("%s\n", text->buffer);
     putchar('\n');
     printf("size: %lld\n", text->length);
     putchar('\n');
@@ -26,10 +25,9 @@ void CreateText(Text* text, const char* filename, size_t sortmode)
     else if (sortmode == BACKWARDS)
         bubbleSort(text, &compareStringBack);
   
-
     for (size_t i = 0; i < text->lines; i++)
       {
-        printf("%lld: %s\n", i + 1, *getLine(text, i));
+        printf("%lld: %s\n", i + 1, getLine(text, i));
       }
 }
 
@@ -41,14 +39,14 @@ void AppendText(Text* text, const char* filename)
 
   for (size_t i = 0; i < text->lines; i++)
     {
-      fputs(*getLine(text, i), fp);
+      fputs(getLine(text, i), fp);
     }
   fputs("---------------------------------------------\n", fp);
 
   fclose(fp);
 }
 
-char** getLinePointers(Text *text)
+char* const* getLinePointers(Text *text)
 {
     char** lineptrs = (char**)calloc(text->lines, sizeof(char*));
     
@@ -61,13 +59,12 @@ char** getLinePointers(Text *text)
         *textptr = '\0'; // \n -> \0
         lineptrs++;
         *lineptrs = textptr + 1;
-        char* tempptr = textptr;
-        textptr = strchr(tempptr + 1, '\n'); 
+        textptr = strchr(textptr + 1, '\n'); 
       }
 
     lineptrs -= (text->lines - 1);
 
-    return lineptrs;
+    return  (char* const*)lineptrs;
 }
 
 char* parseBuf(Text* text, const char* filename)
@@ -76,7 +73,7 @@ char* parseBuf(Text* text, const char* filename)
 
     FILE* fp = fopen(filename, "rb");
 
-    char* buffer = (char*)calloc(text->length + 3, sizeof(char));
+    char* buffer = (char*)calloc(text->length + 2, sizeof(char));
     fread(buffer, sizeof(char), text->length, fp);
     buffer[text->length] = '\r';
     buffer[text->length + 1] = '\0';
@@ -94,7 +91,7 @@ size_t getLength(const char* filename)
     return stats.st_size / sizeof(char);
 }
 
-size_t countLines(Text* text)
+size_t countLines(const Text* text)
 {
     myAssert(text, NULLPTR);
 
@@ -106,51 +103,58 @@ size_t countLines(Text* text)
     return lines;
 }
 
-char** getLine(Text* text, size_t shift)
+char* getLine(Text* text, size_t numLine)
 {
-    myAssert(shift < text->lines, OVERLAP);
+    myAssert(numLine < text->lines, OVERLAP); // out of bounds
 
-    return text->lineptrs + shift;
+    return *(text->lineptrs + numLine);
 }
 
-void bubbleSort(Text* text, int(*compareString)(void* a, void* b))
+void bubbleSort(Text* text, int(*compareString)(const void* a, const void* b))
 {
     myAssert(text, NULLPTR);
 
     for (size_t i = 0; i < text->lines - 1; i++)
       for (size_t j = 0; j < text->lines - 1 - i; j++)
         {
-          char** str1 = getLine(text, j);
-          char** str2 = getLine(text, j + 1);
+          char* str1 = getLine(text, j);
+          char* str2 = getLine(text, j + 1);
 
           if (compareString(str1, str2) > 0)
             {
-              swap(str1, str2);
+              SWAP(*(text->lineptrs + j), *(text->lineptrs + j + 1), sizeof(char*));
             }
         }             
 }   
 
-void swap(char** ptr1, char** ptr2) 
-{   
+void swap(void* ptr1, void* ptr2, size_t size) 
+{  
     myAssert(ptr1, NULLPTR);
     myAssert(ptr2, NULLPTR);
+  
+    void* tempbuf = (void*)calloc(1, size);
 
-    char* temp = *ptr2;
-    *ptr2 = *ptr1;
-    *ptr1 = temp;
+    memmove(tempbuf, ptr1, size);
+    memmove(ptr1, ptr2, size);
+    memmove(ptr1, tempbuf, size);
+    free(tempbuf);
 }
 
-int compareStringForw(void* a, void* b)
+
+int compareStringForw(const void* a, const void* b)
 {
-    char* strptr1 = *(char**) a;
-    char* strptr2 = *(char**) b; 
+    myAssert(a, NULLPTR);
+    myAssert(b, NULLPTR);
+
+    char* strptr1 = (char*) a;
+    char* strptr2 = (char*) b; 
   
     while (*strptr1 != '\0' && *strptr1 != '\r' && !isalpha(*strptr1))
         strptr1++;
     while (*strptr2 != '\0' && *strptr2 != '\r' && !isalpha(*strptr2))
         strptr2++;
 
-    while (*strptr1 == *strptr2)
+    while (*strptr1 == *strptr2 && *strptr1 != '\0' && *strptr2 != '\0')
       {
         strptr1++;
         strptr2++;
@@ -159,13 +163,16 @@ int compareStringForw(void* a, void* b)
     return  *strptr1 - *strptr2;
 }
 
-int compareStringBack(void* a, void* b)
+int compareStringBack(const void* a, const void* b)
 {
-    char* strptr1 = *(char**) a;
-    char* strptr2 = *(char**) b; 
+    myAssert(a, NULLPTR);
+    myAssert(b, NULLPTR);
 
-    char* fixptr1 = *(char**) a;
-    char* fixptr2 = *(char**) b; 
+    char* strptr1 = (char*) a;
+    char* strptr2 = (char*) b; 
+
+    char* fixptr1 = (char*) a;
+    char* fixptr2 = (char*) b; 
   
     while (*strptr1 != '\r')
         strptr1++;
@@ -208,18 +215,3 @@ size_t CheckFile(const char* filename)
     
     return INCORRECT;
 }
-
-
-/*
-int compareFunc(void* a, void* b)
-{
-
-}
-*/
-
-/*
-int compareInt(void* a, void* b)
-{
-    return *(const int*) a - *(const int*) b;
-}
-*/
