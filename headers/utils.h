@@ -23,17 +23,17 @@ enum CORRECTFILE
     CORRECT   = 1
 };
 
-#define SWAP(a, b, size)						        \
-    do									                \
-      {                                             \
-        size_t _size = size;									                \
-        char *_a = (char*)&a, *_b = (char*)&b;					    \
-        do								                \
-	      {								                    \
-	        char _temp = *_a;						            \
-	        *_a++ = *_b;						                \
-	        *_b++ = _temp;						            \
-	      } while (--_size > 0);						        \
+#define swap(a, b, size)						                                           \ 
+    do									                                                       \
+      {                                                                        \
+        size_t _size = size;									                                 \
+        char *_a = (char*)&a, *_b = (char*)&b;					                       \
+        do								                                                     \
+	        {								                                                     \
+	          char _temp = *_a;						                                       \
+	          *_a++ = *_b;						                                           \
+	          *_b++ = _temp;						                                         \
+	        } while (--_size > 0);						                                   \ 
       } while (0)
 
 
@@ -63,7 +63,6 @@ char* parseBuf(Text* text, const char* filename);
 char* const* getLinePointers(Text *text);
 char* getLine(Text* text, size_t shift);
 void bubbleSort(Text* text, int(*compareString)(const void* a, const void* b));
-void swap(void* ptr1, void* ptr2, size_t size);
 int compareStringForw(const void* a, const void* b);
 int compareStringBack(const void* a, const void* b);
 

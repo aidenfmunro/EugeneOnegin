@@ -122,28 +122,10 @@ void bubbleSort(Text* text, compareFunc_t compareFunc)
 
           if (compareFunc(*(text->lineptrs + j), *(text->lineptrs + j + 1)) > 0)
             {
-              SWAP(*(text->lineptrs + j), *(text->lineptrs + j + 1), sizeof(char*));
+              swap(*(text->lineptrs + j), *(text->lineptrs + j + 1), sizeof(char*));
             }
         }             
 }   
-
-/*
-
-void swap(void* ptr1, void* ptr2, size_t size) 
-{  
-    myAssert(ptr1, NULLPTR);
-    myAssert(ptr2, NULLPTR);
-  
-    void* tempbuf = (void*)calloc(1, size);
-
-    memmove(tempbuf, ptr1, size);
-    memmove(ptr1, ptr2, size);
-    memmove(ptr1, tempbuf, size);
-    free(tempbuf);
-}
-
-*/
-
 
 int compareStringForw(const void* a, const void* b)
 {
