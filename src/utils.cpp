@@ -110,22 +110,24 @@ char* getLine(Text* text, size_t numLine)
     return *(text->lineptrs + numLine);
 }
 
-void bubbleSort(Text* text, int(*compareString)(const void* a, const void* b))
+void bubbleSort(Text* text, compareFunc_t compareFunc)
 {
     myAssert(text, NULLPTR);
 
     for (size_t i = 0; i < text->lines - 1; i++)
       for (size_t j = 0; j < text->lines - 1 - i; j++)
         {
-          char* str1 = getLine(text, j);
-          char* str2 = getLine(text, j + 1);
+          // (?) по логике здесь не должно быть функции getLine т.к. compareFunc должен принимать
+          // принимаемые функицей bubbleSort значения. 
 
-          if (compareString(str1, str2) > 0)
+          if (compareFunc(*(text->lineptrs + j), *(text->lineptrs + j + 1)) > 0)
             {
               SWAP(*(text->lineptrs + j), *(text->lineptrs + j + 1), sizeof(char*));
             }
         }             
 }   
+
+/*
 
 void swap(void* ptr1, void* ptr2, size_t size) 
 {  
@@ -139,6 +141,8 @@ void swap(void* ptr1, void* ptr2, size_t size)
     memmove(ptr1, tempbuf, size);
     free(tempbuf);
 }
+
+*/
 
 
 int compareStringForw(const void* a, const void* b)

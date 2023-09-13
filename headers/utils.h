@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 
-// #define SWAP(a,b) do { __typeof__(a) temp; temp = a; a = b; b = temp;} while(0)
+typedef int(*compareFunc_t) (const void*, const void* );
 
 enum ERRORS
 {
