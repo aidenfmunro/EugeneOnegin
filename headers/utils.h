@@ -62,7 +62,7 @@ size_t countLines(const Text* text);
 char* parseBuf(Text* text, const char* filename);
 char* const* getLinePointers(Text *text);
 char* getLine(Text* text, size_t shift);
-void bubbleSort(Text* text, int(*compareString)(const void* a, const void* b));
+void bubbleSort(Text* text, compareFunc_t compareFunc);
 int compareStringForw(const void* a, const void* b);
 int compareStringBack(const void* a, const void* b);
 

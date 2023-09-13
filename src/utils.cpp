@@ -39,7 +39,9 @@ void AppendText(Text* text, const char* filename)
 
   for (size_t i = 0; i < text->lines; i++)
     {
-      fputs(getLine(text, i), fp);
+      char* str = getLine(text, i);
+      if (*str != '\r') //skip lines with spaces
+          fputs(str, fp);
     }
   fputs("---------------------------------------------\n", fp);
 
@@ -125,7 +127,7 @@ void bubbleSort(Text* text, compareFunc_t compareFunc)
               swap(*(text->lineptrs + j), *(text->lineptrs + j + 1), sizeof(char*));
             }
         }             
-}   
+}
 
 int compareStringForw(const void* a, const void* b)
 {
@@ -201,3 +203,15 @@ size_t CheckFile(const char* filename)
     
     return INCORRECT;
 }
+
+/*
+void deleteSpaces(Text* text, const char* filename)
+{
+  myAssert(text, NULLPTR);
+  myAssert(filename, NULLPTR);
+
+  FILE* fp = fopen(filename, "rb");
+
+  
+}
+*/
