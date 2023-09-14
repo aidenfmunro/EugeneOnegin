@@ -42,6 +42,8 @@ void AppendText(Text* text, const char* filename)
   fputs("---------------------------------------------\n", fp);
 
   fclose(fp);
+
+  
 }
 
 char* const* getLinePointers(Text *text)
@@ -209,6 +211,11 @@ size_t CheckFile(const char* filename)
       }
     
     return INCORRECT;
+}
+
+void freeSpace(void* a)
+{
+    free(a);
 }
 
 /*
