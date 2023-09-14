@@ -26,14 +26,13 @@ enum CORRECTFILE
 #define swap(a, b, size)						                                           \ 
     do									                                                       \
       {                                                                        \
-        size_t _size = size;									                                 \
-        char *_a = (char*)&a, *_b = (char*)&b;					                       \
-        do								                                                     \
+        char *_a = (char*)a, *_b = (char*)b;					                     \
+        for (size_t i = 0; i < size; i++)								                                                     \
 	        {								                                                     \
-	          char _temp = *_a;						                                       \
-	          *_a++ = *_b;						                                           \
-	          *_b++ = _temp;						                                         \
-	        } while (--_size > 0);						                                   \ 
+	          char _temp = _a[i];						                                      \
+	          _a[i]= _b[i];						                                           \
+	          _b[i] = _temp;						                                         \
+	        } 						                                                       \ 
       } while (0)
 
 
@@ -62,7 +61,8 @@ size_t countLines(const Text* text);
 char* parseBuf(Text* text, const char* filename);
 char* const* getLinePointers(Text *text);
 char* getLine(Text* text, size_t shift);
-void bubbleSort(Text* text, compareFunc_t compareFunc);
+void generalSort(Text* text, size_t sortmode);
+void bubbleSort(void* array, size_t lines, const size_t elemSize, compareFunc_t compareFunc);
 int compareStringForw(const void* a, const void* b);
 int compareStringBack(const void* a, const void* b);
 

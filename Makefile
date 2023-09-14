@@ -5,10 +5,10 @@ IFLAGS = -I./headers/
 all: a.exe object/main.o object/utils.o
 
 a.exe: object/main.o object/utils.o
-	g++ object/main.o object/utils.o -g
+	g++ object/main.o object/utils.o 
 
 object/main.o: src/main.cpp
-	g++ $(IFLAGS) $(CFLAGS) -c src/main.cpp -o object/main.o -g
+	g++ $(IFLAGS) $(CFLAGS) -c src/main.cpp -o object/main.o 
 
 object/utils.o: src/utils.cpp
-	g++ $(IFLAGS) $(CFLAGS) -c src/utils.cpp -o object/utils.o -g
+	g++ $(IFLAGS) $(CFLAGS) -c src/utils.cpp -o object/utils.o 

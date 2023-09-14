@@ -19,11 +19,7 @@ void CreateText(Text* text, const char* filename, size_t sortmode)
     printf("lines: %lld\n", text->lines);
     putchar('\n');
 
-    if (sortmode == FORWARDS)
-        bubbleSort(text, &compareStringForw);
-  
-    else if (sortmode == BACKWARDS)
-        bubbleSort(text, &compareStringBack);
+    generalSort(text, sortmode);
   
     for (size_t i = 0; i < text->lines; i++)
       {
@@ -112,30 +108,41 @@ char* getLine(Text* text, size_t numLine)
     return *(text->lineptrs + numLine);
 }
 
-void bubbleSort(Text* text, compareFunc_t compareFunc)
+void generalSort(Text* text, size_t sortmode)
 {
-    myAssert(text, NULLPTR);
+    if (sortmode == FORWARDS)
+        bubbleSort((void*)text->lineptrs, text->lines, sizeof(text->lineptrs[0]), compareStringForw);
+    else if (sortmode == BACKWARDS)
+        bubbleSort((void*)text->lineptrs, text->lines, sizeof(text->lineptrs[0]), compareStringBack);
+}
 
-    for (size_t i = 0; i < text->lines - 1; i++)
-      for (size_t j = 0; j < text->lines - 1 - i; j++)
+void bubbleSort(void* array, size_t numElems, const size_t elemSize, compareFunc_t compareFunc)
+{
+    myAssert(array, NULLPTR);
+    myAssert(numElems, NULLPTR);
+    myAssert(elemSize, NULLPTR);
+
+    for (size_t i = 0; i < numElems - 1; i++)
+      for (size_t j = 0; j < numElems - 1 - i; j++)
         {
           // (?) по логике здесь не должно быть функции getLine т.к. compareFunc должен принимать
-          // принимаемые функицей bubbleSort значения. 
+          // принимаемые функицей bubbleSort значения.
 
-          if (compareFunc(*(text->lineptrs + j), *(text->lineptrs + j + 1)) > 0)
+          if (compareFunc(array + j * elemSize, array + (j + 1) * elemSize) > 0)
             {
-              swap(*(text->lineptrs + j), *(text->lineptrs + j + 1), sizeof(char*));
+              swap(array + j * elemSize,  array + (j + 1) * elemSize, elemSize);
             }
         }             
 }
+
 
 int compareStringForw(const void* a, const void* b)
 {
     myAssert(a, NULLPTR);
     myAssert(b, NULLPTR);
 
-    char* strptr1 = (char*) a;
-    char* strptr2 = (char*) b; 
+    char* strptr1 = *(char**) a;
+    char* strptr2 = *(char**) b; 
   
     while (*strptr1 != '\0' && *strptr1 != '\r' && !isalpha(*strptr1))
         strptr1++;
@@ -156,11 +163,11 @@ int compareStringBack(const void* a, const void* b)
     myAssert(a, NULLPTR);
     myAssert(b, NULLPTR);
 
-    char* strptr1 = (char*) a;
-    char* strptr2 = (char*) b; 
+    char* strptr1 = *(char**) a;
+    char* strptr2 = *(char**) b; 
 
-    char* fixptr1 = (char*) a;
-    char* fixptr2 = (char*) b; 
+    char* fixptr1 = *(char**) a;
+    char* fixptr2 = *(char**) b; 
   
     while (*strptr1 != '\r')
         strptr1++;
