@@ -41,9 +41,7 @@ void AppendText(Text* text, const char* filename)
     }
   fputs("---------------------------------------------\n", fp);
 
-  fclose(fp);
-
-  free((void*)text->lineptrs);  
+  fclose(fp); 
 }
 
 char* const* getLinePointers(Text *text)
@@ -114,10 +112,22 @@ char* getLine(Text* text, size_t numLine)
 
 void generalSort(Text* text, size_t sortmode)
 {
-    if (sortmode == FORWARDS)
-        bubbleSort((void*)text->lineptrs, text->lines, sizeof(text->lineptrs[0]), compareStringForw);
-    else if (sortmode == BACKWARDS)
-        bubbleSort((void*)text->lineptrs, text->lines, sizeof(text->lineptrs[0]), compareStringBack);
+    switch (sortmode)
+    {
+    case FORWARDS:
+        quickSort((void*)text->lineptrs, 0, text->lines - 1, sizeof(text->lineptrs[0]), compareStringForw);
+        break;
+    
+    case BACKWARDS:
+        quickSort((void*)text->lineptrs, 0, text->lines - 1, sizeof(text->lineptrs[0]), compareStringBack);
+        break;
+
+    case NONE:
+        break;
+    
+    default:
+        break;
+    }
 }
 
 void bubbleSort(void* array, size_t numElems, const size_t elemSize, compareFunc_t compareFunc)
@@ -137,6 +147,36 @@ void bubbleSort(void* array, size_t numElems, const size_t elemSize, compareFunc
               swap(array + j * elemSize,  array + (j + 1) * elemSize, elemSize);
             }
         }             
+}
+
+void quickSort(void* array, int start, int end, size_t elemSize, compareFunc_t compareFunc)
+{
+    if (start >= end)
+        return;
+
+    int point = partition(array, start, end, elemSize, compareFunc);
+
+    quickSort(array, start, point - 1, elemSize, compareFunc);
+    quickSort(array, point + 1, end, elemSize, compareFunc);
+
+}
+
+int partition(void* array, int left, int right, size_t elemSize, compareFunc_t compareFunc)
+{
+  int pivot = left;
+
+  while (left < right)
+    {
+      while (compareFunc(array + left * elemSize, array + pivot * elemSize) < 0)
+          left++;
+      while (compareFunc(array + right * elemSize, array + pivot * elemSize) > 0)
+          right--;
+      if (left < right)
+          swap(array + left * elemSize, array + right * elemSize, elemSize);
+    }
+    swap(array + pivot * elemSize, array + right * elemSize, elemSize);
+
+    return right;
 }
 
 
@@ -220,14 +260,3 @@ void freeSpace(void* a)
     free(a);
 }
 
-/*
-void deleteSpaces(Text* text, const char* filename)
-{
-  myAssert(text, NULLPTR);
-  myAssert(filename, NULLPTR);
-
-  FILE* fp = fopen(filename, "rb");
-
-  
-}
-*/
