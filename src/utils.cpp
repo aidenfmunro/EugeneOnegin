@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include <sys\stat.h>
 #include <ctype.h>
 #include "utils.h"
@@ -41,11 +42,15 @@ void AppendText(Text* text, const char* filename)
     }
   fputs("---------------------------------------------\n", fp);
 
-  fclose(fp); 
+  fclose(fp);
+
+  free((void*)text->lineptrs);
 }
 
 char* const* getLinePointers(Text *text)
 {
+    myAssert(text, NULLPTR);
+
     char** lineptrs = (char**)calloc(text->lines, sizeof(char*));
     
     *lineptrs = text->buffer;
@@ -112,14 +117,18 @@ char* getLine(Text* text, size_t numLine)
 
 void generalSort(Text* text, size_t sortmode)
 {
+    myAssert(text, NULLPTR);
+
     switch (sortmode)
     {
     case FORWARDS:
         quickSort((void*)text->lineptrs, 0, text->lines - 1, sizeof(text->lineptrs[0]), compareStringForw);
+        //qsort((void*)text->lineptrs, text->lines, sizeof(text->lineptrs[0]), compareStringForw);
         break;
     
     case BACKWARDS:
         quickSort((void*)text->lineptrs, 0, text->lines - 1, sizeof(text->lineptrs[0]), compareStringBack);
+        // qsort((void*)text->lineptrs, text->lines, sizeof(text->lineptrs[0]), compareStringBack);
         break;
 
     case NONE:
@@ -151,6 +160,8 @@ void bubbleSort(void* array, size_t numElems, const size_t elemSize, compareFunc
 
 void quickSort(void* array, int start, int end, size_t elemSize, compareFunc_t compareFunc)
 {
+    myAssert(array, NULLPTR);
+
     if (start >= end)
         return;
 
@@ -163,6 +174,8 @@ void quickSort(void* array, int start, int end, size_t elemSize, compareFunc_t c
 
 int partition(void* array, int left, int right, size_t elemSize, compareFunc_t compareFunc)
 {
+  myAssert(array, NULLPTR);
+
   int pivot = left;
 
   while (left < right)
@@ -206,6 +219,9 @@ int compareStringBack(const void* a, const void* b)
 {
     myAssert(a, NULLPTR);
     myAssert(b, NULLPTR);
+
+    if (a == b)
+        return 0;
 
     char* strptr1 = *(char**) a;
     char* strptr2 = *(char**) b; 
@@ -255,8 +271,4 @@ size_t CheckFile(const char* filename)
     return INCORRECT;
 }
 
-void freeSpace(void* a)
-{
-    free(a);
-}
 

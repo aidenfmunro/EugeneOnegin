@@ -25,9 +25,6 @@ void myQsort(int* arr, int start, int end)
 
     myQsort(arr, start, point - 1);
     myQsort(arr, point + 1, end);
-    
-    
-
 }
 
 int partition(int* arr, int left, int right)
