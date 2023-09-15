@@ -79,7 +79,4 @@ int compareStringForw(const void* a, const void* b);
 
 int compareStringBack(const void* a, const void* b);
 
-
-
-
 #endif

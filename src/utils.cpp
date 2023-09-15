@@ -43,7 +43,7 @@ void AppendText(Text* text, const char* filename)
 
   fclose(fp);
 
-  
+  free((void*)text->lineptrs);  
 }
 
 char* const* getLinePointers(Text *text)
@@ -65,6 +65,8 @@ char* const* getLinePointers(Text *text)
     lineptrs -= (text->lines - 1);
 
     return  (char* const*)lineptrs;
+
+    free((void*)text->buffer);
 }
 
 char* parseBuf(Text* text, const char* filename)
