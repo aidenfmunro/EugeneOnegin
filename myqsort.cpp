@@ -2,7 +2,7 @@
 
 void swapSmall(int* a, int* b);
 
-void myQsort(int* arr, size_t start, size_t end);
+void myQsort(int* arr, int start, int end);
 
 int main()
 {
@@ -12,26 +12,25 @@ int main()
         printf("%d", arr[i]);
 }
 
-void myQsort(int* arr, size_t start, size_t end)
+void myQsort(int* arr, int start, int end)
 {
-    size_t s = start;
-    size_t e = end;
+    int left = start;
+    int right = end;
+    int pivot = arr[(left + right) / 2];
 
-    size_t pivot = arr[(s + e) / 2];
-
-    while (arr[s] < pivot)
-        s++;
-    while (arr[e] > pivot)
-        e++;
+    while (left <= right)
+        {
+          while (arr[left] < pivot)
+            left++;
+          while (arr[right] > pivot)
+            right--;
+          swapSmall(&arr[left++], &arr[right--]);
+        }
     
-    if (s <= e)
-        swapSmall(&arr[s++], &arr[e--]);
-
-    if (start < e)
-        myQsort(arr, start, e);
-    if (end > s)
-        myQsort(arr, s, end);
-
+    if (start < right)
+        myQsort(arr, start, right);
+    if (end > left)
+        myQsort(arr, left, end);
 }
 
 void swapSmall(int* a, int* b)
