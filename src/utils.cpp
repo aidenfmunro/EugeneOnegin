@@ -12,10 +12,11 @@ void CreateText(Text* text, const char* filename, size_t sortmode)
 {
     myAssert(text, NULLPTR);
 
-    text->length   = getLength(filename);
+    text->size     = getSize(filename);
     text->buffer   = parseBuf(text, filename);
-    text->lines    = countLines(text);
+    text->numLines = countLines(text);
     text->lineptrs = getLinePointers(text);
+    text->lines    = getLines(text);
 
     generalSort(text, sortmode);
 }
@@ -26,7 +27,7 @@ void AppendText(Text* text, const char* filename)
 
   FILE* fp = fopen(filename, "a");
 
-  for (size_t i = 0; i < text->lines; i++)
+  for (size_t i = 0; i < text->numLines; i++)
     {
       char* str = getLine(text, i);
       if (*str != '\r') //skip lines with spaces
@@ -47,7 +48,7 @@ char* const* getLinePointers(Text *text)
 {
     myAssert(text, NULLPTR);
 
-    char** lineptrs = (char**)calloc(text->lines, sizeof(char*));
+    char** lineptrs = (char**)calloc(text->numLines, sizeof(char*));
     
     *lineptrs = text->buffer;
 
@@ -61,7 +62,7 @@ char* const* getLinePointers(Text *text)
         textptr = strchr(textptr + 1, '\n'); 
       }
 
-    lineptrs -= (text->lines - 1);
+    lineptrs -= (text->numLines - 1);
 
     return (char* const*)lineptrs;
 }
@@ -72,17 +73,17 @@ char* parseBuf(Text* text, const char* filename)
 
     FILE* fp = fopen(filename, "rb");
 
-    char* buffer = (char*)calloc(text->length + 2, sizeof(char));
-    fread(buffer, sizeof(char), text->length, fp);
-    buffer[text->length] = '\r';
-    buffer[text->length + 1] = '\0';
+    char* buffer = (char*)calloc(text->size + 2, sizeof(char));
+    fread(buffer, sizeof(char), text->size, fp);
+    buffer[text->size] = '\r';
+    buffer[text->size + 1] = '\0';
   
     fclose(fp);
 
     return buffer;
 }
 
-size_t getLength(const char* filename)
+size_t getSize(const char* filename)
 {
     struct stat stats = {};
     stat(filename, &stats);
@@ -95,7 +96,7 @@ size_t countLines(const Text* text)
     myAssert(text, NULLPTR);
 
     size_t lines = 1;
-    for (size_t i = 0; i < text->length; i++)
+    for (size_t i = 0; i < text->size; i++)
         if (text->buffer[i] == '\n')
             lines++;
 
@@ -104,9 +105,22 @@ size_t countLines(const Text* text)
 
 char* getLine(Text* text, size_t numLine)
 {
-    myAssert(numLine < text->lines, OVERLAP); // out of bounds
+    myAssert(numLine < text->numLines, OVERLAP); // out of bounds
 
     return *(text->lineptrs + numLine);
+}
+
+struct Line* getLines(Text* text)
+{
+
+    Line* lines = (struct Line*)calloc(text->numLines + 1, sizeof(Line));
+    for (size_t i = 0; i < text->numLines; i++)
+      {
+        lines->length = strlen(text->lineptrs[i]);
+        lines->string = text->lineptrs[i];
+      }
+    
+    return lines;
 }
 
 void generalSort(Text* text, size_t sortmode)
@@ -116,12 +130,12 @@ void generalSort(Text* text, size_t sortmode)
     switch (sortmode)
     {
     case FORWARDS:
-        quickSort((void*)text->lineptrs, 0, text->lines - 1, sizeof(text->lineptrs[0]), compareStringForw);
+        quickSort((void*)text->lineptrs, 0, text->numLines - 1, sizeof(text->lineptrs[0]), compareStringForw);
         //qsort((void*)text->lineptrs, text->lines, sizeof(text->lineptrs[0]), compareStringForw);
         break;
     
     case BACKWARDS:
-        quickSort((void*)text->lineptrs, 0, text->lines - 1, sizeof(text->lineptrs[0]), compareStringBack);
+        quickSort((void*)text->lineptrs, 0, text->numLines - 1, sizeof(text->lineptrs[0]), compareStringBack);
         // qsort((void*)text->lineptrs, text->lines, sizeof(text->lineptrs[0]), compareStringBack);
         break;
 
@@ -267,6 +281,3 @@ size_t CheckFile(const char* filename)
     
     return INCORRECT;
 }
-
-
-

@@ -89,8 +89,15 @@ struct Text
 {
     char*  buffer;
     char* const* lineptrs;
-    size_t length,
-           lines;
+    size_t size,
+           numLines;
+    struct Line* lines;
+};
+
+struct Line
+{
+    char* string;
+    size_t length;
 };
 
 /**
@@ -152,7 +159,7 @@ size_t CheckFile (const char* filename);
  * 
  */
 
-size_t getLength(const char* filename);
+size_t getSize(const char* filename);
 
 /**
  * 
@@ -205,6 +212,8 @@ char* const* getLinePointers(Text *text);
  * \return string.
  * 
  */
+
+struct Line* getLines(Text* text);
 
 char* getLine(Text* text, size_t numLine);
 
