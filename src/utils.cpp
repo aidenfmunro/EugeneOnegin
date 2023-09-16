@@ -9,23 +9,20 @@ void CreateText(Text* text, const char* filename, size_t sortmode)
 {
     myAssert(text, NULLPTR);
 
-    text->length = getLength(filename);
-    text->buffer = parseBuf(text, filename);
-    text->lines = countLines(text);
+    text->length   = getLength(filename);
+    text->buffer   = parseBuf(text, filename);
+    text->lines    = countLines(text);
     text->lineptrs = getLinePointers(text);
 
-    putchar('\n');
-    printf("size: %lld\n", text->length);
-    putchar('\n');
-    printf("lines: %lld\n", text->lines);
-    putchar('\n');
-
+    // printf("\n" "size:  %lld\n",   text->length);
+    // printf("\n" "lines: %lld\n\n", text->lines);
+    
     generalSort(text, sortmode);
   
-    for (size_t i = 0; i < text->lines; i++)
-      {
-        printf("%lld: %s\n", i + 1, getLine(text, i));
-      }
+    // for (size_t i = 0; i < text->lines; i++)
+    //   {   
+    //     printf("%lld: %s\n", i + 1, getLine(text, i));
+    //   }
 }
 
 void AppendText(Text* text, const char* filename)
@@ -43,8 +40,6 @@ void AppendText(Text* text, const char* filename)
   fputs("---------------------------------------------\n", fp);
 
   fclose(fp);
-
-  free((void*)text->lineptrs);
 }
 
 char* const* getLinePointers(Text *text)
@@ -67,9 +62,7 @@ char* const* getLinePointers(Text *text)
 
     lineptrs -= (text->lines - 1);
 
-    return  (char* const*)lineptrs;
-
-    free((void*)text->buffer);
+    return (char* const*)lineptrs;
 }
 
 char* parseBuf(Text* text, const char* filename)
@@ -134,7 +127,10 @@ void generalSort(Text* text, size_t sortmode)
     case NONE:
         break;
     
-    default:
+#define segfault default
+
+    segfault:
+        *(int*)0 = 0;
         break;
     }
 }
@@ -148,9 +144,6 @@ void bubbleSort(void* array, size_t numElems, const size_t elemSize, compareFunc
     for (size_t i = 0; i < numElems - 1; i++)
       for (size_t j = 0; j < numElems - 1 - i; j++)
         {
-          // (?) по логике здесь не должно быть функции getLine т.к. compareFunc должен принимать
-          // принимаемые функицей bubbleSort значения.
-
           if (compareFunc(array + j * elemSize, array + (j + 1) * elemSize) > 0)
             {
               swap(array + j * elemSize,  array + (j + 1) * elemSize, elemSize);
@@ -180,13 +173,15 @@ int partition(void* array, int left, int right, size_t elemSize, compareFunc_t c
 
   while (left < right)
     {
-      while (compareFunc(array + left * elemSize, array + pivot * elemSize) < 0)
+      while (compareFunc(array + left * elemSize, array + pivot * elemSize) < 0 && left < right)
           left++;
-      while (compareFunc(array + right * elemSize, array + pivot * elemSize) > 0)
+
+      while (compareFunc(array + right * elemSize, array + pivot * elemSize) >= 0 && left < right)
           right--;
       if (left < right)
           swap(array + left * elemSize, array + right * elemSize, elemSize);
     }
+    
     swap(array + pivot * elemSize, array + right * elemSize, elemSize);
 
     return right;
@@ -255,7 +250,7 @@ size_t CheckFile(const char* filename)
     FILE* fp = fopen(filename, "rb");
         if (fp == NULL)
           {
-            printf("Unable to open file\n");
+            printf("Unable to open file: \"%s\"\n", filename);
             return INCORRECT;
           }
 
@@ -263,7 +258,7 @@ size_t CheckFile(const char* filename)
 
     char* dotptr = strchr(filename, (int)('.')) + 1;
 
-    if(strcmp("txt", dotptr) || strcmp("doc", dotptr) ||  strcmp("docx", dotptr) || strcmp("rtf", dotptr))
+    if(strcmp("txt", dotptr) || strcmp("rtf", dotptr))
       {
         return CORRECT;
       }

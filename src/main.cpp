@@ -1,15 +1,17 @@
 #include <stdio.h>
 #include "utils.h"
 
-int main (int argc, char* argv[])
+int main (int argc, const char* argv[])
 {
     if (argc < 2)
       {
         printf ("Please type in two text file names.");  
+        return 1;
       }
-    else if (CheckFile (argv[1]) && CheckFile (argv[2]))
+    
+    if (CheckFile (argv[1]) && CheckFile (argv[2]))
       {
-        Text original = {};
+        Text original       = {};
         Text textStartToEnd = {};
         Text textEndToStart = {};
 
@@ -21,8 +23,6 @@ int main (int argc, char* argv[])
 
         CreateText(&textEndToStart, argv[1], BACKWARDS);
         AppendText(&textEndToStart, argv[2]);
-
-        
       }
 }
 
