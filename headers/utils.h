@@ -58,6 +58,8 @@ void CreateText(Text* text, const char* filename, size_t sortmode);
 
 void AppendText(Text* text, const char* filename);
 
+void DestroyText(Text* text);
+
 size_t CheckFile (const char* filename);
 
 size_t getLength(const char* filename);

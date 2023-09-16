@@ -14,15 +14,7 @@ void CreateText(Text* text, const char* filename, size_t sortmode)
     text->lines    = countLines(text);
     text->lineptrs = getLinePointers(text);
 
-    // printf("\n" "size:  %lld\n",   text->length);
-    // printf("\n" "lines: %lld\n\n", text->lines);
-    
     generalSort(text, sortmode);
-  
-    // for (size_t i = 0; i < text->lines; i++)
-    //   {   
-    //     printf("%lld: %s\n", i + 1, getLine(text, i));
-    //   }
 }
 
 void AppendText(Text* text, const char* filename)
@@ -40,6 +32,12 @@ void AppendText(Text* text, const char* filename)
   fputs("---------------------------------------------\n", fp);
 
   fclose(fp);
+}
+
+void DestroyText(Text* text)
+{
+  free((void*)text->lineptrs);
+  free((void*)text->buffer);
 }
 
 char* const* getLinePointers(Text *text)
@@ -265,5 +263,6 @@ size_t CheckFile(const char* filename)
     
     return INCORRECT;
 }
+
 
 

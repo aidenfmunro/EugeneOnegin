@@ -23,6 +23,10 @@ int main (int argc, const char* argv[])
 
         CreateText(&textEndToStart, argv[1], BACKWARDS);
         AppendText(&textEndToStart, argv[2]);
+
+        DestroyText(&original);
+        DestroyText(&textEndToStart);
+        DestroyText(&textStartToEnd);
       }
 }
 
