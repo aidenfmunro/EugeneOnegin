@@ -125,7 +125,8 @@ void generalSort(Text* text, size_t sortmode)
     case NONE:
         break;
     
-#define segfault default
+#define by    
+#define segfault by default
 
     segfault:
         *(int*)0 = 0;
@@ -234,8 +235,8 @@ int compareStringBack(const void* a, const void* b)
   
     while (*strptr1 == *strptr2 && strptr1 > fixptr1  && strptr2 > fixptr2)
       {
-        strptr1++;
-        strptr2++;
+        strptr1--;
+        strptr2--;
       }
        
     return  *strptr1 - *strptr2;

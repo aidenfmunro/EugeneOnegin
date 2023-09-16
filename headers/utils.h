@@ -76,9 +76,9 @@ void freeSpace(void* a);
 
 void generalSort(Text* text, size_t sortmode);
 
-int partition(void* array, int left, int right, size_t elemSize, compareFunc_t compareFunc);
-
 void quickSort(void* array, int start, int end, size_t elemSize, compareFunc_t compareFunc);
+
+int partition(void* array, int left, int right, size_t elemSize, compareFunc_t compareFunc);
 
 void bubbleSort(void* array, size_t lines, const size_t elemSize, compareFunc_t compareFunc);
 
