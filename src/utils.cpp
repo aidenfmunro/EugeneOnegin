@@ -21,7 +21,7 @@ void CreateText(Text* text, const char* filename, size_t sortmode)
     generalSort(text, sortmode);
 
     for (size_t i = 0; i < text->numLines; i++)
-      printf("%s\n", text->lines[i].string);
+      printf("%s\n", getLine(text, i));
 }
 
 void AppendText(Text* text, const char* filename)
@@ -134,12 +134,12 @@ void generalSort(Text* text, size_t sortmode)
     switch (sortmode)
     {
     case FORWARDS:
-        quickSort((void*)text->lineptrs, 0, text->numLines - 1, sizeof(text->lineptrs[0]), compareStringForw);
+        quickSort((void*)text->lines, 0, text->numLines - 1, sizeof(struct Line), compareStringForw);
         //qsort((void*)text->lineptrs, text->lines, sizeof(text->lineptrs[0]), compareStringForw);
         break;
     
     case BACKWARDS:
-        quickSort((void*)text->lineptrs, 0, text->numLines - 1, sizeof(text->lineptrs[0]), compareStringBack);
+        quickSort((void*)text->lines, 0, text->numLines - 1, sizeof(struct Line), compareStringBack);
         // qsort((void*)text->lineptrs, text->lines, sizeof(text->lineptrs[0]), compareStringBack);
         break;
 
@@ -212,9 +212,15 @@ int compareStringForw(const void* a, const void* b)
 {
     myAssert(a, NULLPTR);
     myAssert(b, NULLPTR);
+    
+    struct Line* str1 = (Line*)a;
+    struct Line* str2 = (Line*)b;
 
-    char* strptr1 = *(char**) a;
-    char* strptr2 = *(char**) b; 
+    myAssert(a, NULLPTR);
+    myAssert(b, NULLPTR);
+
+    char* strptr1 = str1->string;
+    char* strptr2 = str2->string; 
   
     while (*strptr1 != '\0' && *strptr1 != '\r' && !isalpha(*strptr1))
         strptr1++;
@@ -235,14 +241,18 @@ int compareStringBack(const void* a, const void* b)
     myAssert(a, NULLPTR);
     myAssert(b, NULLPTR);
 
+
+    struct Line* str1 = (Line*)a;
+    struct Line* str2 = (Line*)b;
+
     if (a == b)
         return 0;
 
-    char* strptr1 = *(char**) a;
-    char* strptr2 = *(char**) b; 
+    char* strptr1 = str1->string;
+    char* strptr2 = str2->string; 
 
-    char* fixptr1 = *(char**) a;
-    char* fixptr2 = *(char**) b; 
+    char* fixptr1 = str1->string;
+    char* fixptr2 = str2->string; 
   
     while (*strptr1 != '\r')
         strptr1++;
@@ -260,7 +270,7 @@ int compareStringBack(const void* a, const void* b)
         strptr2--;
       }
        
-    return  *strptr1 - *strptr2;
+    return  *strptr1 - *strptr2; 
 } 
 
 size_t CheckFile(const char* filename)
