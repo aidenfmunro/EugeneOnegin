@@ -226,7 +226,7 @@ char* getLine(Text* text, size_t numLine);
  * \brief Gets lots of line structures.
  * 
  * @param[in] text - text structure.
- * @param[out] struct Line.
+ * @param[out] struct Line.   
  * 
  * \return string.
  * 
