@@ -19,9 +19,6 @@ void CreateText(Text* text, const char* filename, size_t sortmode)
     text->lines    = getLines(text);
 
     generalSort(text, sortmode);
-
-    for (size_t i = 0; i < text->numLines; i++)
-      printf("%s\n", getLine(text, i));
 }
 
 void AppendText(Text* text, const char* filename)
@@ -36,7 +33,7 @@ void AppendText(Text* text, const char* filename)
       if (*str != '\r') //skip lines with spaces
           fputs(str, fp);
     }
-  fputs("---------------------------------------------\n", fp);
+  fputs("------------------------------------------------\n", fp);
 
   fclose(fp);
 }
@@ -45,6 +42,7 @@ void DestroyText(Text* text)
 {
   free((void*)text->lineptrs);
   free((void*)text->buffer);
+  free((void*)text->lines);
 }
 
 char* const* getLinePointers(Text *text)
@@ -88,6 +86,8 @@ char* parseBuf(Text* text, const char* filename)
 
 size_t getSize(const char* filename)
 {
+    myAssert(filename, NULLPTR);
+
     struct stat stats = {};
     stat(filename, &stats);
 
@@ -108,13 +108,14 @@ size_t countLines(const Text* text)
 
 char* getLine(Text* text, size_t numLine)
 {
-    myAssert(numLine < text->numLines, OVERLAP); // out of bounds
+    myAssert(numLine < text->numLines, OUTOFBOUNDS);
 
     return text->lines[numLine].string;
 }
 
 struct Line* getLines(Text* text)
 {
+    myAssert(text, NULLPTR);
 
     Line* lines = (struct Line*)calloc(text->numLines, sizeof(Line));
 
@@ -135,12 +136,10 @@ void generalSort(Text* text, size_t sortmode)
     {
     case FORWARDS:
         quickSort((void*)text->lines, 0, text->numLines - 1, sizeof(struct Line), compareStringForw);
-        //qsort((void*)text->lineptrs, text->lines, sizeof(text->lineptrs[0]), compareStringForw);
         break;
     
     case BACKWARDS:
         quickSort((void*)text->lines, 0, text->numLines - 1, sizeof(struct Line), compareStringBack);
-        // qsort((void*)text->lineptrs, text->lines, sizeof(text->lineptrs[0]), compareStringBack);
         break;
 
     case NONE:
@@ -174,6 +173,7 @@ void bubbleSort(void* array, size_t numElems, const size_t elemSize, compareFunc
 void quickSort(void* array, int start, int end, size_t elemSize, compareFunc_t compareFunc)
 {
     myAssert(array, NULLPTR);
+    myAssert(elemSize, NULLPTR);
 
     if (start >= end)
         return;
@@ -198,6 +198,7 @@ int partition(void* array, int left, int right, size_t elemSize, compareFunc_t c
 
       while (compareFunc(array + right * elemSize, array + pivot * elemSize) >= 0 && left < right)
           right--;
+
       if (left < right)
           swap(array + left * elemSize, array + right * elemSize, elemSize);
     }
@@ -216,24 +217,30 @@ int compareStringForw(const void* a, const void* b)
     struct Line* str1 = (Line*)a;
     struct Line* str2 = (Line*)b;
 
-    myAssert(a, NULLPTR);
-    myAssert(b, NULLPTR);
-
     char* strptr1 = str1->string;
-    char* strptr2 = str2->string; 
-  
-    while (*strptr1 != '\0' && *strptr1 != '\r' && !isalpha(*strptr1))
-        strptr1++;
-    while (*strptr2 != '\0' && *strptr2 != '\r' && !isalpha(*strptr2))
-        strptr2++;
+    char* strptr2 = str2->string;
 
-    while (*strptr1 == *strptr2 && *strptr1 != '\0' && *strptr2 != '\0')
+    char* fixptr1 = str1->string + str1->length - 1;
+    char* fixptr2 = str2->string + str2->length - 1; 
+
+    do
       {
-        strptr1++;
-        strptr2++;
-      }
-       
-    return  *strptr1 - *strptr2;
+        while(!isalpha(*strptr1))
+            strptr1++;
+        while(!isalpha(*strptr2))
+            strptr2++;
+        if (*strptr1 != *strptr2)
+            return *strptr1 - *strptr2;
+        else
+          {
+            strptr1++;
+            strptr2++;
+          }
+        
+        
+      } while(strptr1 < fixptr1 && strptr2 < fixptr2);
+    
+    return 0;
 }
 
 int compareStringBack(const void* a, const void* b)
@@ -241,36 +248,31 @@ int compareStringBack(const void* a, const void* b)
     myAssert(a, NULLPTR);
     myAssert(b, NULLPTR);
 
-
     struct Line* str1 = (Line*)a;
     struct Line* str2 = (Line*)b;
 
-    if (a == b)
-        return 0;
-
-    char* strptr1 = str1->string;
-    char* strptr2 = str2->string; 
+    char* strptr1 = str1->string + str1->length - 1;
+    char* strptr2 = str2->string + str2->length - 1; 
 
     char* fixptr1 = str1->string;
     char* fixptr2 = str2->string; 
   
-    while (*strptr1 != '\r')
-        strptr1++;
-    while (*strptr2 != '\r')
-        strptr2++;
-    
-    while (!isalpha(*strptr1) && strptr1 > fixptr1)
-        strptr1--;
-    while (!isalpha(*strptr2) && strptr2 > fixptr2)
-        strptr2--;
-  
-    while (*strptr1 == *strptr2 && strptr1 > fixptr1  && strptr2 > fixptr2)
+    do 
       {
-        strptr1--;
-        strptr2--;
-      }
-       
-    return  *strptr1 - *strptr2; 
+        while (!isalpha(*strptr1))
+            strptr1--;
+        while (!isalpha(*strptr2))
+            strptr2--;
+        if (*strptr1 != *strptr2)
+            return *strptr1 - *strptr2;
+        else
+          {
+            strptr1--;
+            strptr2--;
+          }
+      } while(strptr1 > fixptr1 && strptr2 > fixptr2);
+    
+    return 0;
 } 
 
 size_t CheckFile(const char* filename)
@@ -289,9 +291,7 @@ size_t CheckFile(const char* filename)
     char* dotptr = strchr(filename, (int)('.')) + 1;
 
     if(strcmp("txt", dotptr) || strcmp("rtf", dotptr))
-      {
         return CORRECT;
-      }
-    
+      
     return INCORRECT;
 }

@@ -16,8 +16,8 @@ typedef int(*compareFunc_t) (const void*, const void* );
 
 enum ERRORS
 {
-    NULLPTR = 0,
-    OVERLAP = 1
+    NULLPTR     = 0,
+    OUTOFBOUNDS = 1
 };
 
 /**
@@ -93,6 +93,12 @@ struct Text
            numLines;
     struct Line* lines;
 };
+
+/**
+ * 
+ * Line structure that contains a string and the length of the string.
+ * 
+ */
 
 struct Line
 {
@@ -213,9 +219,20 @@ char* const* getLinePointers(Text *text);
  * 
  */
 
-struct Line* getLines(Text* text);
-
 char* getLine(Text* text, size_t numLine);
+
+/**
+ * 
+ * \brief Gets lots of line structures.
+ * 
+ * @param[in] text - text structure.
+ * @param[out] struct Line.
+ * 
+ * \return string.
+ * 
+ */
+
+struct Line* getLines(Text* text);
 
 /**
  * 
