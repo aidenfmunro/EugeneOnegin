@@ -19,6 +19,9 @@ void CreateText(Text* text, const char* filename, size_t sortmode)
     text->lines    = getLines(text);
 
     generalSort(text, sortmode);
+
+    for (size_t i = 0; i < text->numLines; i++)
+      printf("%s\n", text->lines[i].string);
 }
 
 void AppendText(Text* text, const char* filename)
@@ -107,17 +110,18 @@ char* getLine(Text* text, size_t numLine)
 {
     myAssert(numLine < text->numLines, OVERLAP); // out of bounds
 
-    return *(text->lineptrs + numLine);
+    return text->lines[numLine].string;
 }
 
 struct Line* getLines(Text* text)
 {
 
-    Line* lines = (struct Line*)calloc(text->numLines + 1, sizeof(Line));
+    Line* lines = (struct Line*)calloc(text->numLines, sizeof(Line));
+
     for (size_t i = 0; i < text->numLines; i++)
       {
-        lines->length = strlen(text->lineptrs[i]);
-        lines->string = text->lineptrs[i];
+        lines[i].length = strlen(text->lineptrs[i]);
+        lines[i].string = text->lineptrs[i];
       }
     
     return lines;
