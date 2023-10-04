@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <sys\stat.h>
+#include <sys/stat.h>
 #include <ctype.h>
 #include "utils.h"
 
@@ -76,8 +76,7 @@ char* parseBuf(Text* text, const char* filename)
 
     char* buffer = (char*)calloc(text->size + 2, sizeof(char));
     fread(buffer, sizeof(char), text->size, fp);
-    buffer[text->size] = '\r';
-    buffer[text->size + 1] = '\0';
+    buffer[text->size] = '\0';
   
     fclose(fp);
 
@@ -235,9 +234,7 @@ int compareStringForw(const void* a, const void* b)
           {
             strptr1++;
             strptr2++;
-          }
-        
-        
+          }  
       } while(strptr1 < fixptr1 && strptr2 < fixptr2);
     
     return 0;
@@ -288,7 +285,7 @@ size_t CheckFile(const char* filename)
 
     fclose(fp);
 
-    char* dotptr = strchr(filename, (int)('.')) + 1;
+    const char* dotptr = strchr(filename, (int)('.')) + 1;
 
     if(strcmp("txt", dotptr) || strcmp("rtf", dotptr))
         return CORRECT;
